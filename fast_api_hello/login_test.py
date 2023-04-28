@@ -19,17 +19,25 @@ def test_get_user_specific():
 
 def test_login_admin_fail():
     response = client.post(
-        "/auth/login", json={"email": "admin", "password": "admin1"}
+        "/auth/login", json={"email": "admin",
+                             "password": "admin1"}
     )
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
 
-def test_R_user():
+def test_read_user():
+    # user without token
+    # expected unauthenticated fail
     response = client.get("/user")
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    # re-login with proper admin user
+    # get JWT to attach to request header
     response_login = client.post(
-        "/auth/login", json={"email": "admin", "password": "admin"}
+        "/auth/login", json={"email": "admin",
+                             "password": "admin"}
     )
+
     token = response_login.json()["access_token"]
     response_get = client.get(
         "/user", headers={"Authorization": f"Bearer {token}"}
@@ -37,12 +45,22 @@ def test_R_user():
     assert response_get.status_code == status.HTTP_200_OK
 
 
-def test_U_user():
+def test_update_user():
+    # three scenarios
+    # no JWT
+    # unauthorized JWT
+    # proper JWT
+
+    # 1. No JWT - expected unauthenticated
     response = client.patch("/user/53", json={"email": "email53@gmail.com"})
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    # 2. Unauthorized JWT, login as an unauthorized user with role 0 instead of 1 as admin
+    # Expected 403
     response_login = client.post(
-        "/auth/login", json={"email": "ocd", "password": "string"}
+        "/auth/login",
+        json={"email": "ocd",
+              "password": "string"}
     )
     token = response_login.json()["access_token"]
     response_patch = client.patch(
@@ -52,11 +70,15 @@ def test_U_user():
     )
     assert response_patch.status_code == status.HTTP_403_FORBIDDEN
 
+    # 3. Login with proper user, attach JWT to header
+    # Update
+    # Expected 200
     response_login_admin = client.post(
-        "/auth/login", json={"email": "admin", "password": "admin"}
+        "/auth/login",
+        json={"email": "admin",
+              "password": "admin"}
     )
     token_admin = response_login_admin.json()["access_token"]
-    print(token_admin)
     response_patch_admin = client.patch(
         "/user/53",
         headers={"Authorization": f"Bearer {token_admin}"},
@@ -69,21 +91,40 @@ def test_U_user():
     assert response_patch_admin.status_code == status.HTTP_200_OK
 
 
-def test_D_user():
+def test_delete_user():
+    """
+    Test delete user in three scenario
+    Scenario one: No JWT - unauthenticated user
+    Scenario two: Unauthorized user with improper JWT
+    Scenario three: Proper user with admin right to execute the method
+    """
+
+    # Scenario 1: Non-login user - expected 403
     response = client.delete("/user/53")
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    # Scenario 2: Improper user, normal user executing forbidden action
+    # Get JWT then attach to the header
+    # Return 403
     response_login = client.post(
-        "/auth/login", json={"email": "ocd", "password": "string"}
+        "/auth/login", json={"email": "ocd",
+                             "password": "string"}
     )
     token = response_login.json()["access_token"]
     response_delete = client.delete(
-        "/user/53", headers={"Authorization": f"Bearer {token}"}
+        "/user/53",
+        headers={"Authorization": f"Bearer {token}"}
     )
     assert response_delete.status_code == status.HTTP_403_FORBIDDEN
 
+
+    # proper admin user
+    # delete user
+    # expecct 200
     response_login_admin = client.post(
-        "/auth/login", json={"email": "admin", "password": "admin"}
+        "/auth/login",
+        json={"email": "admin",
+             "password": "admin"}
     )
     token_admin = response_login_admin.json()["access_token"]
     print(token_admin)
