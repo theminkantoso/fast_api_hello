@@ -1,16 +1,15 @@
 import time
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
-from passlib.hash import pbkdf2_sha512
-from sqlalchemy import Row
-
 from config.auth_handler import signJWT
-from services.index import LoginService
 from config.database import conn
+from fastapi import APIRouter, Depends, HTTPException
 from models.index import users
-from schemas.login import Login
+from passlib.hash import pbkdf2_sha512
 from schemas.index import RegUser
+from schemas.login import Login
+from services.index import LoginService
+from sqlalchemy import Row
 
 auth = APIRouter(prefix="/auth")
 
