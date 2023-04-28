@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  fast_api:
+    build: ./fast_api_hello
+    networks:
+      - mysql
+    ports:
+      - '8000:8000'
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3306:3306'
+    networks:
+      - mysql
+    volumes:
+      - mysql-data:/var/lib/mysql
+volumes:
+  mysql-data:
+networks:
+  mysql:

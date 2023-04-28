@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+cryptography
+PyJWT
+decouple
+pytest
+httpx
+pytest-html
+passlib
+black
