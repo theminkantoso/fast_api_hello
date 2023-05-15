@@ -8,7 +8,7 @@ class User(BaseModel):
     password: str
     role: int
 
-
+from services import  login
 class UpdateUser(BaseModel):
     name: str
     email: str

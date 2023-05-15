@@ -6,43 +6,43 @@ from config.database import conn
 from models.user import users
 
 
-def get_user(email):
+def get_user(email) -> Row:
     res = conn.execute(users.select().where(users.c.email == email)).first()
     if res is None:
         return None
     return res
 
 
-def check_existed_then_get_user(email):
+def check_existed_then_get_user(email) -> dict:
     res = get_user(email)
     if res is None:
-        raise HTTPException(status_code=400, detail="Non existed user")
+        raise HTTPException(status_code=400, detail="Email or password wrong")
     user = convert_to_user(res)
     return user
 
 
-def convert_to_user(user: Row):
+def convert_to_user(user: Row) -> dict:
     user_data = user._data
     keys = ("id", "name", "email", "password", "role")
     return dict(zip(keys, user_data))
 
 
-def user_password_check(user, password: str):
+def user_password_check(user, password: str) -> bool:
     return pbkdf2_sha512.verify(password, user["password"])
 
 
 class LoginService:
     @staticmethod
-    def verify_user_and_get_info(email: str, password: str):
+    def verify_user_and_get_info(email: str, password: str) -> dict:
         user = check_existed_then_get_user(email)
 
         if not user_password_check(user, password):
-            raise HTTPException(status_code=401, detail="Wrong password or email")
+            raise HTTPException(status_code=400, detail="Wrong password or email")
 
-        return {"user_id": user["id"], "role": user["role"]}
+        return {"id": user["id"], "role": user["role"]}
 
     @staticmethod
-    def get_user(email: str):
+    def get_user(email: str) -> Row:
         return get_user(email)
 
 
@@ -57,8 +57,9 @@ class LoginService:
             raise HTTPException(status_code=500, detail="Create user error")
 
     @staticmethod
-    def user_existed(email: str):
+    def user_existed(email: str) -> bool:
         user = get_user(email)
+        print(user)
         if user is not None:
             return True
         return False

@@ -28,11 +28,6 @@ class JWTRole(HTTPBearer):
         except:
             return False
 
-        # Fail fast technique
-        # if not payload:
-        #     return False
-        # if payload["role"] != self.role:
-
         if payload:
             if payload["expires"] >= time.time():
                 return False

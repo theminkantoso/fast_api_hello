@@ -1,17 +1,11 @@
-from typing import Optional
+from fastapi import Depends, FastAPI
 
-import uvicorn
-from fastapi import FastAPI, Depends
+from routes.index import auth, user, post
 
-from config.database import engine, SessionLocal
-from routes.index import user
-from routes.index import auth
-
-# import models.user
-# models.user.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.include_router(user)
 app.include_router(auth)
+app.include_router(post)
 
 #
 # @app.get('/blog')

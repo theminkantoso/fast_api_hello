@@ -1,23 +1,22 @@
 import time
 from typing import List
 
-from fastapi import APIRouter, Depends
-from pydantic import json
-from sqlalchemy import Row
-
 from config.auth import JWTBearer
 # from config.auth import JWTBearer
 from config.database import conn
 from config.role import JWTRole
+from fastapi import APIRouter, Depends
 from models.index import users
-from schemas.index import User, UpdateUser, RegUser
+from pydantic import json
+from schemas.index import RegUser, UpdateUser, User
 from services.index import UserService
+from sqlalchemy import Row
 
-user = APIRouter(prefix="/users")
+user = APIRouter(prefix="/v1/user", tags=["Users information CRUD routes"])
 
 
 # @user.get("/", dependencies=[Depends(JWTRole())])
-@user.get("/", dependencies=[Depends(JWTBearer())])
+@user.get("", dependencies=[Depends(JWTBearer())])
 async def get_all_user():
     return UserService.get_all_users()
 

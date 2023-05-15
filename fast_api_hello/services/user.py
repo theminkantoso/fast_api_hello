@@ -9,17 +9,18 @@ def convert_to_user(user: Row):
     user_data = user._data
     keys = ("id", "name", "email", "password", "role")
     return dict(zip(keys, user_data))
+
 class UserService:
     @staticmethod
-    def get_all_users():
-        res = conn.execute(users.select()).fetchall()
-        ret = []
-        for i in range(len(res)):
-            ret.append(convert_to_user(res[i]))
-        return ret
+    def get_all_users() -> list[dict]:
+        response = conn.execute(users.select()).fetchall()
+        return_list = []
+        for res in response:
+            return_list.append(convert_to_user(res))
+        return return_list
 
     @staticmethod
-    def get_user_by_id(id):
+    def get_user_by_id(id) -> dict:
         temp = conn.execute(users.select().where(users.c.id == id)).fetchall()
         return convert_to_user(temp[0])
 

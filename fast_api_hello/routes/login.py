@@ -1,17 +1,14 @@
-import time
-from typing import List
 
 from config.auth_handler import signJWT
-from config.database import conn
+
 from fastapi import APIRouter, Depends, HTTPException
-from models.index import users
-from passlib.hash import pbkdf2_sha512
+
 from schemas.index import RegUser
 from schemas.login import Login
 from services.index import LoginService
 from sqlalchemy import Row
 
-auth = APIRouter(prefix="/auth")
+auth = APIRouter(prefix="/v1/auth", tags=["Authenticate routes"])
 
 
 @auth.post("/login")

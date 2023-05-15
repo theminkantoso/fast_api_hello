@@ -11,3 +11,5 @@ pytest-html
 passlib
 black
 isort
+pytest-cov
+bcrypt
