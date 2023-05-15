@@ -11,7 +11,7 @@ users = Table(
     Column('password', String(255)),
     Column('role', Integer))
 
-meta.create_all(engine)
+# meta.create_all(engine)
 # from sqlalchemy import Column, Integer, String
 #
 # from config.database import Base

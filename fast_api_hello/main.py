@@ -1,11 +1,16 @@
 from fastapi import Depends, FastAPI
 
+from config.database import Base, engine
 from routes.index import auth, user, post
+
+from models import book
 
 app = FastAPI()
 app.include_router(user)
 app.include_router(auth)
 app.include_router(post)
+
+Base.metadata.create_all(bind=engine)
 
 #
 # @app.get('/blog')
