@@ -1,16 +1,10 @@
-import time
-from typing import List
 
 from config.auth import JWTBearer
-# from config.auth import JWTBearer
-from config.database import conn
 from config.role import JWTRole
 from fastapi import APIRouter, Depends
-from models.index import users
-from pydantic import json
+
 from schemas.index import RegUser, UpdateUser, User
 from services.index import UserService
-from sqlalchemy import Row
 
 user = APIRouter(prefix="/v1/user", tags=["Users information CRUD routes"])
 
