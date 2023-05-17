@@ -1,14 +1,19 @@
-from fastapi import Depends, FastAPI
+import logging
+
+from fastapi import FastAPI
 
 from config.database import Base, engine
 from routes.index import auth, user, post
-
-from models import book
 
 app = FastAPI()
 app.include_router(user)
 app.include_router(auth)
 app.include_router(post)
+
+logging.basicConfig(level=logging.INFO, filename="log.log", filemode="w",
+                    format="%(service_layer)s - %(asctime)s - %(levelname)s - %(message)s")
+
+
 
 Base.metadata.create_all(bind=engine)
 
